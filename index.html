@@ -57,7 +57,17 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 .stage{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px}
 .stage-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-bottom:16px}
 .stage-top b{color:var(--text)}
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.demo{display:grid;grid-template-columns:44% 26px 1fr;align-items:center;gap:8px}
+.orig{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;border:2px solid var(--accent);background:#15151c}
+.orig video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.olabel{position:absolute;top:8px;left:8px;z-index:1;font-size:10px;font-weight:700;letter-spacing:.08em;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:6px}
+.odur{position:absolute;bottom:8px;right:8px;z-index:1;font-size:10px;font-weight:600;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:6px}
+.arrow{color:var(--muted);font-size:22px;text-align:center}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.strip{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.strip .tile{border-radius:12px}
+.strip p{margin-top:8px;font-size:13px;color:var(--muted);line-height:1.35}
+@media(max-width:900px){.strip{grid-template-columns:repeat(3,1fr)}}
 .tile{aspect-ratio:9/16;border-radius:12px;position:relative;overflow:hidden;background:#15151c;animation:pop .6s both}
 .tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .tile span{position:absolute;top:6px;left:6px;font-size:10px;font-weight:600;background:rgba(0,0,0,.55);padding:1px 6px;border-radius:6px;z-index:1;color:#fff}
@@ -152,12 +162,27 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
     </div>
 
     <div class="stage" aria-hidden="true">
-      <div class="stage-top"><span><b>skincare_ugc.mp4</b> → 11 variations</span><span>9:16 · 1080p</span></div>
-      <div class="tiles" id="tiles"></div>
+      <div class="stage-top"><span><b>growth_tips.mp4</b> → 11 variations</span><span>9:16 · 1080p</span></div>
+      <div class="demo">
+        <div class="orig"><span class="olabel">ORIGINAL</span><video src="demo/original.mp4" poster="demo/poster.jpg" muted autoplay loop playsinline></video><span class="odur">▶ 0:05</span></div>
+        <div class="arrow">→</div>
+        <div class="tiles" id="tiles"></div>
+      </div>
       <div class="stage-bar"><i></i></div>
     </div>
   </div>
 </header>
+
+<section id="demo" style="padding-top:20px">
+  <div class="wrap">
+    <div class="sec-head" style="text-align:center;margin:0 auto 40px">
+      <h2>One source, many creatives</h2>
+      <p>Each output gets its own hook, caption style and effect values — a new creative to post or test, not a re-encoded copy.</p>
+    </div>
+    <div class="strip" id="strip"></div>
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-top:22px">Also randomized per file: speed, pixel shift, pitch, timestamps, device tags and encoding.</p>
+  </div>
+</section>
 
 <section id="how">
   <div class="wrap">
@@ -282,24 +307,23 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
     <a href="mailto:rerollvariations@gmail.com">rerollvariations@gmail.com</a>
   </div>
 </footer>
-<!-- demo footage: Mixkit free stock video (mixkit.co), varied with ReRoll -->
+<!-- demo footage: Mixkit free stock video (mixkit.co, clip 42323), varied with ReRoll -->
 
 <script>
 (function(){
-  var looks=[['original','Original'],['v1','White box'],['v2','Outline · mirrored'],['v3','Snap bar'],['v4','Bold yellow'],['v5','Pink pill · mirrored'],
-    ['v6','Typewriter'],['v7','Dark box'],['v8','Serif · mirrored'],['v9','Red box'],['v10','Neon'],['v11','Sticker · mirrored']];
-  var el=document.getElementById('tiles');
-  looks.forEach(function(l,i){
-    var d=document.createElement('div');d.className='tile'+(i===0?' src':'');d.style.animationDelay=(i*0.06)+'s';
-    var v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.autoplay=true;v.preload='auto';
-    v.setAttribute('muted','');v.setAttribute('playsinline','');v.src='demo/'+l[0]+'.mp4';
-    if(i===0)v.poster='demo/poster.jpg';
-    d.appendChild(v);
-    var s=document.createElement('span');s.textContent=i===0?'original':l[0];d.appendChild(s);
-    var e=document.createElement('em');e.textContent=l[1];d.appendChild(e);
-    el.appendChild(d);
-    v.addEventListener('loadeddata',function(){try{v.currentTime=(i*0.37)%2;v.play();}catch(x){}});
-  });
+  var looks=[["v1","White box · cool · hue shift"],["v2","Outline · zoomed · cool"],["v3","Snap bar · darker"],["v4","Bold yellow · brighter · cool"],["v5","Pink pill · zoomed · hue shift"],["v6","Typewriter · brighter · zoomed"],["v7","Dark box · darker · tilted"],["v8","Serif · zoomed · warm"],["v9","Red box · brighter · zoomed"],["v10","Neon · darker · warm"],["v11","Sticker · cool · saturated"]];
+  function tile(l,i,withLabel){
+    var d=document.createElement('div');d.className='tile';d.style.animationDelay=(i*0.06)+'s';
+    var v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.autoplay=true;v.preload='metadata';
+    v.setAttribute('muted','');v.setAttribute('playsinline','');v.src='demo/'+l[0]+'.mp4';d.appendChild(v);
+    var s=document.createElement('span');s.textContent=l[0];d.appendChild(s);
+    if(!withLabel){var e=document.createElement('em');e.textContent=l[1].split(' · ')[0];d.appendChild(e);}
+    v.addEventListener('loadeddata',function(){try{v.currentTime=(i*0.41)%2;v.play();}catch(x){}});
+    return d;
+  }
+  var t=document.getElementById('tiles');looks.slice(0,6).forEach(function(l,i){t.appendChild(tile(l,i,false));});
+  var st=document.getElementById('strip');
+  [0,3,4,7,8,10,1,2,5,6,9].slice(0,6).forEach(function(k,i){var w=document.createElement('div');w.appendChild(tile(looks[k],i,true));var p=document.createElement('p');p.textContent=looks[k][1];w.appendChild(p);st.appendChild(w);});
 })();
 </script>
 </body>
